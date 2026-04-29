@@ -1,0 +1,89 @@
+@startuml Diagrama_Clases_Biblioteca
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam classFontStyle bold
+
+class Persona {
+    - _cedula: str
+    - _nombre: str
+    - _apellido: str
+    + cedula: str <<property>>
+    + nombre: str <<property>>
+    + apellido: str <<property>>
+    + __str__(): str
+}
+
+class Estudiante {
+    - _carrera: str
+    + carrera: str <<property>>
+    + __str__(): str
+}
+
+class Profesor {
+    - _departamento: str
+    + departamento: str <<property>>
+    + __str__(): str
+}
+
+class Libro {
+    - _isbn: str
+    - _titulo: str
+    - _autor: str
+    - _disponible: bool
+    + isbn: str <<property>>
+    + titulo: str <<property>>
+    + autor: str <<property>>
+    + disponible: bool <<property>>
+    + prestar(): None
+    + devolver(): None
+    + __str__(): str
+}
+
+class Prestamo {
+    + MULTA_POR_DIA: float = 0.50
+    - _libro: Libro
+    - _usuario: Persona
+    - _fecha_prestamo_str: str
+    - _fecha_devolucion_str: str
+    - _fecha_devolucion: date
+    - _activo: bool
+    - _multa: float
+    + libro: Libro <<property>>
+    + usuario: Persona <<property>>
+    + activo: bool <<property>>
+    + multa: float <<property>>
+    + registrar_devolucion(fecha_actual: date): dict
+    + __str__(): str
+}
+
+class Biblioteca {
+    - _nombre: str
+    - _libros: list
+    - _estudiantes: list
+    - _profesores: list
+    - _prestamos: list
+    + registrar_libro(libro: Libro): None
+    + registrar_estudiante(est: Estudiante): None
+    + registrar_profesor(prof: Profesor): None
+    - _buscar_libro(isbn: str): Libro
+    - _buscar_usuario(cedula: str): Persona
+    + prestar_libro(isbn, cedula, fecha, fecha_dev): str
+    + devolver_libro(isbn, cedula, fecha_actual): str
+    + consultar_prestamos_activos(cedula: str): list
+    + mostrar_catalogo(): None
+    + __str__(): str
+}
+
+Estudiante --|> Persona : hereda
+Profesor   --|> Persona : hereda
+
+Biblioteca "1" *-- "1..*" Libro      : contiene
+Biblioteca "1" o-- "0..*" Estudiante : registra
+Biblioteca "1" o-- "0..*" Profesor   : registra
+Biblioteca "1" *-- "0..*" Prestamo   : gestiona
+
+Prestamo "0..*" --> "1" Libro   : referencia
+Prestamo "0..*" --> "1" Persona : referencia
+
+@enduml
